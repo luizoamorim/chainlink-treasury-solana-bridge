@@ -31,9 +31,11 @@ pub struct MintWLink<'info> {
 /// Handler to mint wLINK tokens.
 /// Logic: User Locked LINK on Ethereum -> Relayer calls this -> User gets wLINK on Solana.
 pub fn handler(ctx: Context<MintWLink>, amount: u64) -> Result<()> {
+    // SECURITY CHECK: Ensure only the admin/relayer can mint tokens.
     if ctx.accounts.signer.key() != ctx.accounts.config.admin {
         return Err(ProgramError::MissingRequiredSignature.into());
     }
+
     // 1. Prepare the Cross-Program Invocation (CPI) accounts.
     // We are telling the Token Program: "Please mint tokens using my authority".
     let cpi_accounts = MintTo {

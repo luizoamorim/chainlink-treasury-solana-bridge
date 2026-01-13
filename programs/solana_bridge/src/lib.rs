@@ -1,18 +1,25 @@
+// Here we import everything from the anchor_lang crate (Result, Pubkey, Context, etc.)
 use anchor_lang::prelude::*;
 
-// Módulos
+// Import modules
 pub mod instructions;
 pub mod state;
 
-// Importar tudo de instructions
+// Import all from instructions
 use instructions::*;
 
-declare_id!("DnxJHPRqJZhcGdjZunm4BtUNq6UnWXeFrjyY3GM5qjuz");
+// Define the program ID
+// This is generated using `solana address -k <keypair-file>` when deploying
+// To check the program ID run anchor keys list
+declare_id!("CN9K44XGc8gRwHijdaKxPg86jzkReA5CSMs3CZbE6ZqP");
 
+// #[program] macro defines the entry point for the Solana program
 #[program]
 pub mod solana_bridge {
+    // Use everything from the outer scope - all that is inside of what we imported above
     use super::*;
 
+    // Initialize the bridge with necessary configurations
     pub fn initialize(
         ctx: Context<Initialize>,
         wlink_mint: Pubkey,
@@ -21,10 +28,12 @@ pub mod solana_bridge {
         instructions::initialize::handler(ctx, wlink_mint, usdc_mint)
     }
 
+    // Mint wrapped LINK tokens
     pub fn mint_wlink(ctx: Context<MintWLink>, amount: u64) -> Result<()> {
         instructions::mint_wlink::handler(ctx, amount)
     }
 
+    // Receive CCTP messages and process them
     pub fn receive_cctp_message(
         ctx: Context<ReceiveCctp>,
         amount: u64,
